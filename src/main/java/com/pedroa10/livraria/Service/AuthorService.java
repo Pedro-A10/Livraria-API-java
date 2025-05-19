@@ -28,7 +28,7 @@ public class AuthorService {
 		return aRepo.save(author);
 	}
 	
-	public List<Author> findByAllAuthors(){
+	public List<Author> getAllAuthors(){
 		return aRepo.findAll();
 	}
 	
@@ -37,22 +37,25 @@ public class AuthorService {
 	}
 	
 	public Author updateAuthor(Long id, Author updateAuthor) {
-		Optional<Author> authorOptional =aRepo.findById(id);
-		if(authorOptional.isPresent() ) {
-			Author author = authorOptional.get();
-			
-			author.setName("Atualizar nome: ");
-			author.setBio("Atualizar biografia: ");
-			
-			return aRepo.save(author);
-		}else {
-			throw new EntityNotFoundException("Autor não encontrado.");
+		Author author = aRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Autor não encontrado."));
+		
+		if(!author.getName().equals(updateAuthor.getName()) && aRepo.existsByName(updateAuthor.getName())) {
+			throw new IllegalArgumentException("Já existe um autor com esse nome.");
 		}
+		
+		author.setName(updateAuthor.getName());
+		author.setBio(updateAuthor.getBio());
+		author.setBirthDate(updateAuthor.getBirthDate());
+		author.setNationality(updateAuthor.getNationality());
+		
+		return aRepo.save(author);
 	}
 	
 	public void deleteAuthor(Long id) {
-		if(!aRepo.existsById(id)) {
-			throw new RuntimeException("Autor não encontrado.");
+		Author author = aRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Autor não encontrado."));
+		
+		if(!author.getBooks().isEmpty()) {
+			throw new IllegalStateException("Não é possível excluir um author com livros associados.");
 		}
 		aRepo.deleteById(id);
 	}
