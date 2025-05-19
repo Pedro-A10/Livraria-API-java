@@ -52,6 +52,4 @@ public class Book {
 		Book other = (Book) obj;
 		return Objects.equals(id, other.id);
 	}
-
-	
 }
