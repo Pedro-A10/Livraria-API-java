@@ -15,57 +15,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pedroa10.livraria.Exception.EntityNotFoundException;
-import com.pedroa10.livraria.Service.AuthorService;
+import com.pedroa10.livraria.Service.BookService;
 import com.pedroa10.livraria.model.Author;
+import com.pedroa10.livraria.model.Book;
 
 @RestController
-@RequestMapping("/api/authors")
-public class AuthorController {
-	
+@RequestMapping("/api/books")
+public class BookController {
+
 	@Autowired
-	private AuthorService authorService;
+	private BookService bookService;
 	
 	@PostMapping
-	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
-		Author createdAuthor = authorService.createAuthor(author);
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdAuthor);
+	public ResponseEntity<Book> createBook(@RequestBody Book book) {
+		Book createdBook = bookService.createBook(book);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Author>> getAllAuthors() {
-		List<Author> authors = authorService.getAllAuthors();
-		return ResponseEntity.ok(authors);
+	public ResponseEntity<List<Book>> getAllBooks() {
+		List<Book> books = bookService.getAllBooks();
+		return ResponseEntity.ok(books);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
-		Author author = authorService.getAuthorById(id);
-		return ResponseEntity.ok(author);
+	public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+		Book book = bookService.getBookById(id);
+		return ResponseEntity.ok(book);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateAuthor(@PathVariable Long id, @RequestBody Author updateAuthor) {
+	public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody Book updateBook) {
 		try {
-			Author author = authorService.updateAuthor(id, updateAuthor);
-			return ResponseEntity.ok(author);
+			Book book = bookService.updateBook(id, updateBook);
+			return ResponseEntity.ok(book);
 			
 		}catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
-		}catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteAuthor(@PathVariable Long id) {
+	public ResponseEntity<?> deleteBook(@PathVariable Long id) {
 		try {
-			authorService.deleteAuthor(id);
+			bookService.deleteBook(id);
 			return ResponseEntity.noContent().build();
 			
 		}catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
-		}catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 }
+

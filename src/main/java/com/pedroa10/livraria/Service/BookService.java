@@ -39,7 +39,7 @@ public class BookService {
 		return bRepo.save(book);
 	}
 	
-	public List<Book> getAllBooks(){
+	public List<Book> getAllBooks() {
 		return bRepo.findAll();
 	}
 	
