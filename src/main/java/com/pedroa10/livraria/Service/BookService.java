@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pedroa10.livraria.Exception.BusinessRuleException;
 import com.pedroa10.livraria.Exception.EntityNotFoundException;
+import com.pedroa10.livraria.Exception.ValidationException;
 import com.pedroa10.livraria.Repository.AuthorRepository;
 import com.pedroa10.livraria.Repository.BookRepository;
 import com.pedroa10.livraria.model.Author;
@@ -21,16 +23,19 @@ public class BookService {
 	
 	public Book createBook(Book book) {
 		if(book.getTitle() == null || book.getTitle().trim().isEmpty()) {
-			throw new IllegalArgumentException("O título deve ser preenchido.");
+			throw new ValidationException("O título deve ser preenchido.");
 		}
 		if(book.getIsbn() == null || book.getIsbn().trim().isEmpty()) {
-			throw new IllegalArgumentException("O ISBN deve ser preenchido.");
+			throw new ValidationException("O ISBN deve ser preenchido.");
 		}
 		if(book.getAuthor() == null || book.getAuthor().getId() == null) {
-			throw new IllegalArgumentException("Autor não informado.");
+			throw new ValidationException("Autor não informado.");
+		}
+		if(!book.getIsbn().matches("^\\d{3}-\\d{2}-\\d{5}-\\d{2}-\\d$")) {
+			throw new ValidationException("Formato de ISBN inválido.");
 		}
 		if(bRepo.existsByIsbn(book.getIsbn())) {
-			throw new IllegalArgumentException("Isbs já cadastrado.");
+			throw new BusinessRuleException("ISBN já cadastrado.");
 		}
 		
 		Author author = aRepo.findById(book.getAuthor().getId()).orElseThrow(() -> new EntityNotFoundException("Autor não encontrado."));

@@ -1,4 +1,4 @@
-package com.pedroa10.livraria.Controller;
+ package com.pedroa10.livraria.Controller;
 
 import java.util.List;
 
@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pedroa10.livraria.Exception.EntityNotFoundException;
 import com.pedroa10.livraria.Service.AuthorService;
 import com.pedroa10.livraria.model.Author;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/authors")
@@ -26,7 +27,7 @@ public class AuthorController {
 	private AuthorService authorService;
 	
 	@PostMapping
-	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+	public ResponseEntity<Author> createAuthor(@Valid @RequestBody Author author) {
 		Author createdAuthor = authorService.createAuthor(author);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdAuthor);
 	}
@@ -44,28 +45,14 @@ public class AuthorController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateAuthor(@PathVariable Long id, @RequestBody Author updateAuthor) {
-		try {
-			Author author = authorService.updateAuthor(id, updateAuthor);
-			return ResponseEntity.ok(author);
-			
-		}catch (EntityNotFoundException e) {
-			return ResponseEntity.notFound().build();
-		}catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<?> updateAuthor(@Valid @PathVariable Long id, @RequestBody Author updateAuthor) {
+		Author author = authorService.updateAuthor(id, updateAuthor);
+		return ResponseEntity.ok(author);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteAuthor(@PathVariable Long id) {
-		try {
-			authorService.deleteAuthor(id);
-			return ResponseEntity.noContent().build();
-			
-		}catch (EntityNotFoundException e) {
-			return ResponseEntity.notFound().build();
-		}catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		authorService.deleteAuthor(id);
+		return ResponseEntity.noContent().build();
 	}
 }
